@@ -12,6 +12,13 @@ loader = jinja2.FileSystemLoader(searchpath=TEMPLATES_PATH)
 env = jinja2.Environment(loader=loader, keep_trailing_newline=True)
 
 
+def show_shell(shell: str, shells: list[str]):
+    for shell_iter in shells:
+        if shell in shell_iter.lower():
+            return True
+    return False
+
+
 def main(args):
     template_fnames = [
         "bash1.sh.j2",
@@ -20,8 +27,22 @@ def main(args):
         "keychain.sh.j2",
     ]
 
-    print("#", "-" * 10)
+    shells = args.shells
+    want_bash = show_shell("bash", shells)
+    want_powershell = show_shell("powershell", shells)
+
+    filtered_template_fnames = []
     for fname in template_fnames:
+        path = pathlib.Path(fname)
+        path_tmp = path.stem.replace(".j2", "")
+        _logger.debug(f"{path_tmp=}")
+        if want_bash and path_tmp.endswith("sh"):
+            filtered_template_fnames.append(fname)
+        if want_powershell and path_tmp.endswith("ps1"):
+            filtered_template_fnames.append(fname)
+
+    print("#", "-" * 10)
+    for fname in filtered_template_fnames:
         template = env.get_template(fname)
         rendered = template.render(data={"variables": args.variables})
         trimmed = rendered.strip()

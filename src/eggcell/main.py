@@ -50,7 +50,13 @@ def parse_args(args):
     group = parser.add_mutually_exclusive_group()
 
     parser.add_argument(
-        "variables",
+        "--shells",
+        help="list of 1 or more shells",
+        default=["powershell", "bash"],
+        nargs="+",
+    )
+    parser.add_argument(
+        "--variables",
         help="list of 1 or more variable to wrap in templates",
         nargs="+",
     )
