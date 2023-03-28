@@ -15,16 +15,15 @@ env = jinja2.Environment(loader=loader, keep_trailing_newline=True)
 def main(args):
     template_fnames = [
         "bash1.sh.j2",
+        "pwsh.ps1.j2",
         "github-bash.sh.j2",
         "keychain.sh.j2",
-        "pwsh.ps1.j2",
     ]
 
     print("#", "-" * 10)
     for fname in template_fnames:
         template = env.get_template(fname)
-        data = {"variables": args.variables}
-        rendered = template.render(data=data)
+        rendered = template.render(data={"variables": args.variables})
         trimmed = rendered.strip()
         out = f"{trimmed}\n"
         print(out)
