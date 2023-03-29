@@ -42,7 +42,9 @@ def get_shell_preferences(shell_names: list[str]) -> list[Shell]:
     return shells
 
 
-def get_template_names(shells: list[Shell], template_fnames: list[str]) -> list[str]:
+def get_prefered_templates(
+    shells: list[Shell], template_fnames: list[str]
+) -> list[str]:
     filtered_template_fnames = []
     for shell in shells:
         for fname in template_fnames:
@@ -87,20 +89,19 @@ def get_all_templates():
         "pwsh.ps1.j2",
     ]
     for path in list(TEMPLATES_PATH.glob("*.j2")):
-        if path not in template_fnames:
+        if path.name not in template_fnames:
             template_fnames.append(path.name)
 
     return template_fnames
 
 
 def main(args):
-    template_fnames = get_all_templates()
-
     shell_names = args.shells
     user_variables = args.variables
 
+    template_fnames = get_all_templates()
     shells = get_shell_preferences(shell_names)
-    filtered_fnames = get_template_names(shells, template_fnames)
+    filtered_fnames = get_prefered_templates(shells, template_fnames)
     template_fnames = fix_ordering(template_fnames, filtered_fnames)
 
     data = {"variables": user_variables}
