@@ -1,3 +1,4 @@
+# awscli: {{ variable }}
 set +o history
 {%- for variable in data.variables %}
 aws configure set {{ variable }} "${{ variable }}"
