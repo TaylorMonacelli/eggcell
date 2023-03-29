@@ -1,3 +1,4 @@
+import io
 import logging
 import pathlib
 
@@ -19,15 +20,7 @@ def show_shell(shell: str, shells: list[str]):
     return False
 
 
-def main(args):
-    template_fnames = [
-        "bash1.sh.j2",
-        "pwsh.ps1.j2",
-        "github-bash.sh.j2",
-        "keychain.sh.j2",
-    ]
-
-    shells = args.shells
+def get_template_names(template_fnames: list[str], shells: list[str]) -> list[str]:
     want_bash = show_shell("bash", shells)
     want_powershell = show_shell("powershell", shells)
 
@@ -41,12 +34,30 @@ def main(args):
         if want_powershell and path_tmp.endswith("ps1"):
             filtered_template_fnames.append(fname)
 
-    print("#", "-" * 10)
+    return filtered_template_fnames
+
+
+def main(args):
+    template_fnames = [
+        "bash1.sh.j2",
+        "pwsh.ps1.j2",
+        "github-bash.sh.j2",
+        "keychain.sh.j2",
+    ]
+
+    shells = args.shells
+    filtered_template_fnames = get_template_names(template_fnames, shells)
+
+    vfile = io.StringIO()
+    vfile.write("#" + "-" * 10)
+    vfile.write("\n")
     for fname in filtered_template_fnames:
         template = env.get_template(fname)
         rendered = template.render(data={"variables": args.variables})
         trimmed = rendered.strip()
         out = f"{trimmed}\n"
-        print(out)
+        vfile.write(out)
+        vfile.write("\n")
 
+    print(vfile.getvalue(), end="")
     _logger.info("Script ends here")
