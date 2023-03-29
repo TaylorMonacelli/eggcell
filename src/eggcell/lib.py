@@ -28,7 +28,7 @@ def want_shell(shell_name: str, shells: list[str]):
     return False
 
 
-def get_shell_preferences(shell_names: list[str]) -> bool:
+def get_shell_preferences(shell_names: list[str]) -> list[Shell]:
     shells = []
 
     name = "bash"
@@ -42,17 +42,12 @@ def get_shell_preferences(shell_names: list[str]) -> bool:
     return shells
 
 
-def get_template_names(
-    shells: list[Shell], template_fnames: list[str], shell_names: list[str]
-) -> list[str]:
-
+def get_template_names(shells: list[Shell], template_fnames: list[str]) -> list[str]:
     filtered_template_fnames = []
     for shell in shells:
-        _logger.debug(type(shell))
         for fname in template_fnames:
             path = pathlib.Path(fname)
             path_tmp = path.stem.replace(".j2", "")
-            _logger.debug(f"{path_tmp=}")
 
             if shell.want and path_tmp.lower().endswith(shell.extension):
                 filtered_template_fnames.append(fname)
@@ -60,10 +55,11 @@ def get_template_names(
     return filtered_template_fnames
 
 
-def render_templates_with_header(templates: list[str], template_data: dict) -> str:
+def aggregate_templates_to_str(templates: list[str], template_data: dict) -> str:
     vfile = io.StringIO()
     vfile.write("#" + "-" * 10)
     vfile.write("\n")
+
     for fname in templates:
         template = env.get_template(fname)
         rendered = template.render(data=template_data)
@@ -73,6 +69,14 @@ def render_templates_with_header(templates: list[str], template_data: dict) -> s
         vfile.write("\n")
 
     return vfile.getvalue()
+
+
+def fix_ordering(l1, l2):
+    fnames = []
+    for tpl in l1:
+        if tpl in l2:
+            fnames.append(tpl)
+    return fnames
 
 
 def main(args):
@@ -85,12 +89,13 @@ def main(args):
     ]
 
     shell_names = args.shells
-    shells = get_shell_preferences(shell_names)
-    filtered_template_fnames = get_template_names(shells, template_fnames, shell_names)
     user_variables = args.variables
+
+    shells = get_shell_preferences(shell_names)
+    filtered_fnames = get_template_names(shells, template_fnames)
+    template_fnames = fix_ordering(template_fnames, filtered_fnames)
+
     data = {"variables": user_variables}
-    out = render_templates_with_header(
-        templates=filtered_template_fnames, template_data=data
-    )
+    out = aggregate_templates_to_str(template_fnames, template_data=data)
     print(out)
     _logger.info("Script ends here")
