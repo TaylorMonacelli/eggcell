@@ -1,0 +1,5 @@
+set +o history
+{%- for variable in data.variables %}
+aws configure set {{ variable }} "${{ variable }}"
+{%- endfor %}
+set -o history

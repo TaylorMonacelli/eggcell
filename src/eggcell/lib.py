@@ -40,6 +40,7 @@ def get_template_names(template_fnames: list[str], shells: list[str]) -> list[st
 def main(args):
     template_fnames = [
         "bash1.sh.j2",
+        "awscli.sh.j2",
         "pwsh.ps1.j2",
         "github-bash.sh.j2",
         "keychain.sh.j2",
