@@ -88,8 +88,8 @@ def get_all_templates():
         "bash1.sh.j2",
         "pwsh.ps1.j2",
     ]
-    for path in list(TEMPLATES_PATH.glob("*.j2")):
-        if path.name not in template_fnames:
+    for path in TEMPLATES_PATH.glob("*.j2"):
+        if path.name.lower() not in template_fnames:
             template_fnames.append(path.name)
 
     return template_fnames
