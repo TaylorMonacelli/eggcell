@@ -29,9 +29,9 @@ def get_template_names(template_fnames: list[str], shells: list[str]) -> list[st
         path = pathlib.Path(fname)
         path_tmp = path.stem.replace(".j2", "")
         _logger.debug(f"{path_tmp=}")
-        if want_bash and path_tmp.endswith("sh"):
+        if want_bash and path_tmp.lower().endswith("sh"):
             filtered_template_fnames.append(fname)
-        if want_powershell and path_tmp.endswith("ps1"):
+        if want_powershell and path_tmp.lower().endswith("ps1"):
             filtered_template_fnames.append(fname)
 
     return filtered_template_fnames
