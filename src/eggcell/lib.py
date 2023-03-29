@@ -79,15 +79,22 @@ def fix_ordering(l1, l2):
     return fnames
 
 
-def main(args):
+def get_all_templates():
+    # I prefer these to have priority,
+    # the others can come in any oreder
     template_fnames = [
         "bash1.sh.j2",
         "pwsh.ps1.j2",
-        "awscli.sh.j2",
-        "awscli_pwsh.ps1.j2",
-        "github-bash.sh.j2",
-        "keychain.sh.j2",
     ]
+    for path in list(TEMPLATES_PATH.glob("*.j2")):
+        if path not in template_fnames:
+            template_fnames.append(path.name)
+
+    return template_fnames
+
+
+def main(args):
+    template_fnames = get_all_templates()
 
     shell_names = args.shells
     user_variables = args.variables
