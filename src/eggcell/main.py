@@ -57,8 +57,10 @@ def parse_args(args):
     )
     parser.add_argument(
         "--variables",
-        help="list of 1 or more variable to wrap in templates",
+        help="list of 1 or more variable to wrap in "
+        "templates, eg AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY",
         nargs="+",
+        required=True,
     )
     group.add_argument(
         "--list",
