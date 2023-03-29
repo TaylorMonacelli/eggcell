@@ -84,6 +84,7 @@ def main(args):
         "bash1.sh.j2",
         "pwsh.ps1.j2",
         "awscli.sh.j2",
+        "awscli_pwsh.ps1.j2",
         "github-bash.sh.j2",
         "keychain.sh.j2",
     ]
